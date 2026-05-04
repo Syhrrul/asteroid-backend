@@ -179,7 +179,11 @@ def run_pipeline():
     model = load_model()
     features = load_features()
 
-    df['prediction'] = model.predict(df[features])
+    proba = model.predict_proba(df[features])
+    preds = model.predict(df[features])
+    df['prediction'] = preds
+    df['confidence'] = [float(p[pred]) for p, pred in zip(proba, preds)]
+    df['confidence'] = df['confidence'].round(4)
 
     # metadata
     df['event_date'] = pd.to_datetime(df['event_date'])
